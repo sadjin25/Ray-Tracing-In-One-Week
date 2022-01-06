@@ -5,6 +5,8 @@
 #include <iostream>
 
 bool hitSphere(const point3& center, double radius, const ray& r)  {
+    if(center.z() > 0) return 0;    //woojin's modification. remove exception of getting out of the ball from the vision. 
+
     vec3 oc = r.origin() - center;
     auto a = dot(r.direction(), r.direction());
     auto b = 2.0 * dot(oc, r.direction());
