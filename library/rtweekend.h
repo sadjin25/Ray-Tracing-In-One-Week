@@ -4,6 +4,8 @@
 #include <cmath>
 #include <limits>
 #include <memory>
+#include <cstdlib>
+#include <random>
 
 //Usings
 
@@ -20,6 +22,25 @@ const double pi = 3.14;
 
 inline double degreesToRadians(double degrees) {
     return degrees * pi / 180.0;
+}
+
+inline double randomDouble() {
+    //Returns a random real in [0, 1)
+    static std::uniform_real_distribution<double> distribution(0.0, 1.0);
+    static std::mt19937 gen;
+
+    return distribution(gen);
+}
+
+inline double randomDouble(double min, double max) {
+    //Returns a random real in [min, max)
+    return min + (max-min) * randomDouble(); 
+}
+
+inline double clamp(double x, double min, double max) {
+    if(x < min) return min;
+    if(x > max) return max;
+    return x;
 }
 
 //Common Headers
