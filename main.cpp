@@ -7,27 +7,19 @@
 
 #include <iostream>
 
-// double hitSphere(const point3& center, double radius, const ray& r)  {
-//     if(center.z() > 0) return 0;    //woojin's modification. remove exception of getting out of the ball from the vision. 
-
-//     vec3 oc = r.origin() - center;
-//     auto a = r.direction().lengthSquared();
-//     auto halfB = dot(oc, r.direction());
-//     auto c = oc.lengthSquared() - radius*radius;
-//     auto discriminant = halfB * halfB - a*c;
-//     if(discriminant < 0) {
-//         return -1.0;
-//     } else {
-//         return (-halfB - sqrt(discriminant)) / a;
-//     }
-//     return (discriminant > 0);
-// }
-
-color rayColor(const ray& r, const hittable& world) {
+color rayColor(const ray& r, const hittable& world, int depth) {
     hitRecord rec;
-    if(world.hit(r, 0, infinity, rec)) {
-        return 0.5 * (rec.normal + color(1,1,1));
+
+    //If we've exceeded the ray bounce limit, no more light is gathered.
+    if(depth <= 0) {
+        return color(0, 0, 0);
     }
+
+    if(world.hit(r, 0.001, infinity, rec)) {
+        point3 target = rec.p + rec.normal + randomInUnitSphere();
+        return 0.5 * rayColor(ray(rec.p, target - rec.p), world, depth-1);
+    }
+
     vec3 unitDirection = unitVector(r.direction());
     auto t = 0.5*(unitDirection.y() + 1.0);
     return (1.0-t)*color(1.0, 1.0, 1.0) + t*color(0.5, 0.7, 1.0);
@@ -38,7 +30,8 @@ int main() {
     const auto aspectRatio = 16.0 / 9.0;
     const int imageWidth = 400;
     const int imageHeight = static_cast<int>(imageWidth / aspectRatio);
-    const int samplesPerPixel = 100;
+    const int samplesPerPixel = 50;
+    const int maxDepth = 50;
 
     //World
     hittable_list world;
@@ -60,7 +53,7 @@ int main() {
                 auto u = (i + randomDouble()) / (imageWidth-1);
                 auto v = (j + randomDouble()) / (imageHeight-1);
                 ray r = cam.getRay(u, v);
-                pixelColor += rayColor(r, world);
+                pixelColor += rayColor(r, world, maxDepth);
             }
             writeColor(std::cout, pixelColor, samplesPerPixel);
         }

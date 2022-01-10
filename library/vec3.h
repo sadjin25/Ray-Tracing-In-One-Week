@@ -45,6 +45,14 @@ class vec3 {
             return e[0]*e[0] + e[1]*e[1] + e[2]*e[2];
         }
 
+        inline static vec3 random() {
+            return vec3(randomDouble(), randomDouble(), randomDouble());
+        }
+
+        inline static vec3 random(double min, double max) {
+            return vec3(randomDouble(min, max), randomDouble(min, max), randomDouble(min, max));
+        }
+
     public: 
         double e[3];
 };
@@ -53,6 +61,7 @@ class vec3 {
 using point3 = vec3;    //3D point
 using color = vec3;     //RGB color
 
+//Vec3 Utility Functions
 inline std::ostream& operator<<(std::ostream &out, const vec3 &v) {
     return out << v.e[0] << ' ' << v.e[1] << ' ' << v.e[2];
 }
@@ -95,6 +104,14 @@ inline vec3 cross(const vec3 &u, const vec3 &v) {
 
 inline vec3 unitVector(vec3 v) {
     return v / v.length();
+}
+
+vec3 randomInUnitSphere() {
+    while(1) {
+        auto p = vec3::random(-1, 1);
+        if(p.lengthSquared() >= 1) continue;
+        return p;
+    }
 }
 
 #endif
