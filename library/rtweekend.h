@@ -5,7 +5,7 @@
 #include <limits>
 #include <memory>
 #include <cstdlib>
-//#include <random>
+#include <random>
 
 //Usings
 
@@ -26,11 +26,10 @@ inline double degreesToRadians(double degrees) {
 
 inline double randomDouble() {
     //Returns a random real in [0, 1)
-    // static std::uniform_real_distribution<double> distribution(0.0, 1.0);
-    // static std::mt19937 gen;
+    static std::uniform_real_distribution<double> distribution(0.0, 1.0);
+    static std::mt19937 gen;
 
-    // return distribution(gen);
-    return rand() / (RAND_MAX + 1.0);
+    return distribution(gen);
 }
 
 inline double randomDouble(double min, double max) {
